@@ -12,28 +12,28 @@ def property_lookup(address: str = Query(...)):
             "Authorization": f"Bearer {os.getenv('DATAFINITI_API_KEY')}"
         }
         params = {
-            "query": f"address:{address}",
+            "query": f"address:\"{address}\"",
             "format": "JSON",
-            "num_records": 1
+            "num_records": 1,
+            "product": "property"
         }
 
-        print("🔍 Searching for:", address)
-        print("🔧 Query sent:", params)
+        print("🔍 Searching with v3 for:", address)
+        print("🔧 Query params:", params)
 
-        # ✅ Corrected endpoint (.net instead of .co)
-        response = requests.get("https://api.datafiniti.net/v4/properties/search", headers=headers, params=params)
+        response = requests.get("https://api.datafiniti.net/v3/data", headers=headers, params=params)
         response.raise_for_status()
 
         data = response.json()
-        if "records" not in data or not data["records"]:
-            return JSONResponse(content={"message": "No records found."}, status_code=404)
+        if not data.get("records"):
+            return JSONResponse(content={"message": "No records found in v3."}, status_code=404)
 
         return data
 
-    except requests.RequestException as e:
-        print("❌ Request to Datafiniti failed:", str(e))
-        return JSONResponse(content={"error": "Failed to contact Datafiniti."}, status_code=502)
+    except requests.HTTPError as e:
+        print("❌ HTTP error:", e.response.status_code, e.response.text)
+        return JSONResponse(content={"error": f"Datafiniti error {e.response.status_code}", "details": e.response.text}, status_code=502)
 
     except Exception as e:
-        print("❌ Unexpected error:", str(e))
-        return JSONResponse(content={"error": "Internal server error."}, status_code=500)
+        print("❌ General error:", str(e))
+        return JSONResponse(content={"error": "Internal server error"}, status_code=500)
