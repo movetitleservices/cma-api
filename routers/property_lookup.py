@@ -20,7 +20,8 @@ def property_lookup(address: str = Query(...)):
         print("🔍 Searching for:", address)
         print("🔧 Query sent:", params)
 
-        response = requests.get("https://api.datafiniti.co/v4/properties/search", headers=headers, params=params)
+        # ✅ Corrected endpoint (.net instead of .co)
+        response = requests.get("https://api.datafiniti.net/v4/properties/search", headers=headers, params=params)
         response.raise_for_status()
 
         data = response.json()
