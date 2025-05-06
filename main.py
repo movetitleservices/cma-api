@@ -6,9 +6,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = FastAPI()
-from fastapi.middleware.cors import CORSMiddlewareorigins = [
-    "http://localhost:3000",
-    "https://your-frontend-url.com",  # 🔁 replace with your live React app URL
+
+# ✅ CORS configuration
+origins = [
+    "http://localhost:3000",                 # Local React dev server
+    "https://your-frontend-url.com"          # 🔁 Replace with your real deployed frontend domain
 ]
 
 app.add_middleware(
@@ -19,6 +21,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ✅ Register your property lookup route
 app.include_router(property_lookup.router)
 
 @app.get("/")
