@@ -6,8 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = FastAPI()
-
-origins = [
+from fastapi.middleware.cors import CORSMiddlewareorigins = [
     "http://localhost:3000",
     "https://your-frontend-url.com",  # 🔁 replace with your live React app URL
 ]
